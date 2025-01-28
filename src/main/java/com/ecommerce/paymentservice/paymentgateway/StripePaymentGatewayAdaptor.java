@@ -50,9 +50,18 @@ public class StripePaymentGatewayAdaptor implements PaymentGateway {
                 PaymentLinkCreateParams.builder()
                         .addLineItem(
                                 PaymentLinkCreateParams.LineItem.builder()
-                                        .setPrice(price.toString())
+                                        .setPrice(price.getId())
                                         .setQuantity(1L)
                                         .build()
+                        )
+                        .setAfterCompletion(
+                                PaymentLinkCreateParams.AfterCompletion.builder()
+                                        .setType(PaymentLinkCreateParams.AfterCompletion.Type.REDIRECT)
+                                        .setRedirect(
+                                                PaymentLinkCreateParams.AfterCompletion.Redirect.builder()
+                                                        .setUrl("https://example.com/success")
+                                                        .build()
+                                        ).build()
                         )
                         .build();
         PaymentLink paymentLink = null;
@@ -62,6 +71,6 @@ public class StripePaymentGatewayAdaptor implements PaymentGateway {
             throw new RuntimeException(e);
         }
 
-        return paymentLink.toString();
+        return paymentLink.getUrl().toString();
     }
 }
